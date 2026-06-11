@@ -62,8 +62,7 @@ It shows how AI can support a business process end to end: qualification, priori
 
 ## Screenshots
 
-```md
-![Lead workspace](/assets/screenshots/home.png)
+![Lead workspace](./assets/screenshots/home.png)
 
 ![Lead detail](./assets/screenshots/lead-detail.png)
 
@@ -74,7 +73,6 @@ It shows how AI can support a business process end to end: qualification, priori
 ![Workflow audit trail](./assets/screenshots/workflow-log.png)
 
 ![PostgreSQL proof](./assets/screenshots/postgres-proof.png)
-```
 
 ## Why this is portfolio strong
 
