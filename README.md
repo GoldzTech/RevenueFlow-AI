@@ -63,7 +63,7 @@ It shows how AI can support a business process end to end: qualification, priori
 ## Screenshots
 
 ```md
-![Lead workspace](./assets/screenshots/home.png)
+![Lead workspace](/assets/screenshots/home.png)
 
 ![Lead detail](./assets/screenshots/lead-detail.png)
 
