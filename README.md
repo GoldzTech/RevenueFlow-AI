@@ -1,27 +1,26 @@
 # RevenueFlow AI
 
-**AI-powered lead operations platform for structured extraction, lead scoring, proposal drafting, and human-in-the-loop approval.**
+AI-powered lead qualification, proposal generation, and human approval workflow platform.
 
-RevenueFlow AI turns raw inbound lead text into a real commercial workflow. A lead enters the system, gets structured by AI, is prioritized by score, converted into a proposal draft, and routed through human approval before any final action is taken.
+RevenueFlow AI transforms raw inbound lead messages into a structured commercial workflow. A lead enters the system, is extracted and scored by AI, converted into a proposal draft, and routed through human approval before any final action is taken.
 
-This is intentionally built as a portfolio-grade product, not a chatbot demo. It includes asynchronous processing, persistent workflow state, an executive dashboard, audit-friendly job tracking, and PostgreSQL-backed domain data. The result is a strong demonstration of AI engineering, backend architecture, and product thinking in one system.
+Most AI projects stop at text generation. This one focuses on workflow value: it shows how AI can support a real business process end to end — qualification, prioritization, proposal drafting, approval, and reporting — backed by asynchronous processing, persistent workflow state, audit-friendly job tracking, and an executive dashboard.
 
-## Why this project stands out
+## Demo
 
-Most AI projects stop at generation. RevenueFlow AI is different because it focuses on workflow value.
+[![Watch the demo](https://img.youtube.com/vi/oaYHY2RZnbM/0.jpg)](https://youtu.be/oaYHY2RZnbM?si=Fdrrr_LMyfB60Zmy)
 
-It shows how AI can support a business process end to end: qualification, prioritization, proposal drafting, approval, and reporting. That makes the project much more credible for clients and hiring teams because the output is not just text, but a decision-ready commercial asset.
+## Key features
 
-## What the platform does
-
-- Accepts raw inbound lead text through a web interface
-- Extracts structured commercial data with AI
-- Scores and prioritizes leads automatically
-- Generates proposal and email drafts
-- Routes proposals through human approval
-- Tracks jobs, errors, and workflow events
-- Displays executive metrics in a dashboard
-- Persists all core data in PostgreSQL
+* Lead intake from raw commercial messages
+* AI extraction of structured business data
+* Automatic lead scoring and prioritization
+* Proposal and email draft generation
+* Human-in-the-loop approval flow
+* Background job processing
+* Workflow event and error tracking
+* Executive dashboard with operational metrics
+* PostgreSQL persistence for core domain data
 
 ## Core workflow
 
@@ -33,32 +32,66 @@ It shows how AI can support a business process end to end: qualification, priori
 6. A human reviews, edits, approves, rejects, or sends the proposal.
 7. The dashboard surfaces operational metrics and recent activity.
 
+## Architecture
+
+```text
+Frontend (Next.js)
+        ↓
+API (FastAPI)
+        ↓
+Redis Queue
+        ↓
+Celery Workers
+        ↓
+OpenAI
+        ↓
+PostgreSQL
+```
+
+### Main responsibilities
+
+* The web app handles lead intake, dashboarding, and approval actions.
+* The API stores the domain objects and exposes workflow endpoints.
+* Celery workers process extraction, scoring, and proposal generation asynchronously.
+* Redis manages the job queue.
+* PostgreSQL stores the full workflow state, including jobs and events.
+
+## Example workflow data
+
+### Input
+
+> We need help qualifying inbound leads and generating proposal drafts for our sales team.
+
+### Example output
+
+```json
+{
+  "company": "Unknown",
+  "request_type": "lead_operations",
+  "priority": "high",
+  "confidence": 0.91,
+  "next_step": "generate_proposal"
+}
+```
+
 ## Main domains
 
-- `leads`
-- `lead_extractions`
-- `lead_scores`
-- `proposals`
-- `workflow_jobs`
-- `workflow_events`
+* `leads`
+* `lead_extractions`
+* `lead_scores`
+* `proposals`
+* `workflow_jobs`
+* `workflow_events`
 
 ## Tech stack
 
-- **Frontend:** Next.js
-- **Backend:** FastAPI
-- **Async processing:** Celery
-- **Queue:** Redis
-- **Database:** PostgreSQL
-- **AI provider:** OpenAI
-- **Local deployment:** Docker Compose
-
-## Architecture
-
-- The web app handles lead intake, dashboarding, and approval actions.
-- The API stores the domain objects and exposes the workflow endpoints.
-- Celery workers process extraction, scoring, and proposal generation asynchronously.
-- Redis manages the job queue.
-- PostgreSQL stores the full workflow state, including jobs and events.
+* **Frontend:** Next.js
+* **Backend:** FastAPI, SQLAlchemy, Psycopg
+* **Async processing:** Celery
+* **Queue / broker:** Redis
+* **Database:** PostgreSQL
+* **AI provider:** OpenAI (`gpt-4o-mini`)
+* **Local deployment:** Docker Compose
 
 ## Screenshots
 
@@ -74,22 +107,15 @@ It shows how AI can support a business process end to end: qualification, priori
 
 ![PostgreSQL proof](./assets/screenshots/postgres-proof.png)
 
-## Why this is portfolio strong
+## Getting started
 
-RevenueFlow AI demonstrates:
+### Prerequisites
 
-- AI applied to a real business workflow
-- structured output validation
-- asynchronous processing
-- operational observability
-- human approval before delivery
-- executive-level metrics
-- product-oriented engineering
-- database persistence and traceability
+* Docker and Docker Compose
+* Python 3.12+ (only needed for running the backend outside Docker)
+* Node.js 18+ (only needed for running the frontend outside Docker)
 
-That combination makes the project much stronger than a standard AI demo or CRUD app.
-
-## Local run
+### Run locally
 
 ```bash
 docker compose up --build
@@ -97,46 +123,59 @@ docker compose up --build
 
 Open:
 
-- Web app: `http://localhost:3000`
-- API: `http://localhost:8000`
+* Web app: `http://localhost:3000`
+* API: `http://localhost:8000`
 
-## Environment
+### Environment variables
 
-Create a `.env` file based on the example file in the repository and set:
+Copy `.env.example` to `.env` and fill in the values:
 
-- OpenAI API key
-- PostgreSQL connection values
-- Redis connection values
-- web API URL variables
+| Variable | Description |
+|---|---|
+| `API_HOST` | Host the API binds to (default `0.0.0.0`) |
+| `API_PORT` | Port the API listens on (default `8000`) |
+| `API_ENV` | Environment name (`development`, `production`, ...) |
+| `API_DEBUG` | Enables debug mode |
+| `POSTGRES_DB` | PostgreSQL database name |
+| `POSTGRES_USER` | PostgreSQL user |
+| `POSTGRES_PASSWORD` | PostgreSQL password |
+| `POSTGRES_HOST` | PostgreSQL host |
+| `POSTGRES_PORT` | PostgreSQL port |
+| `DATABASE_URL` | Full SQLAlchemy/Postgres connection string |
+| `REDIS_HOST` | Redis host |
+| `REDIS_PORT` | Redis port |
+| `REDIS_URL` | Redis connection string |
+| `CELERY_BROKER_URL` | Celery broker (Redis) URL |
+| `CELERY_RESULT_BACKEND` | Celery result backend (Redis) URL |
+| `NEXT_PUBLIC_API_URL` | Public API URL used by the frontend |
+| `INTERNAL_API_URL` | Internal API URL used for server-side requests |
+| `OPENAI_API_KEY` | OpenAI API key |
+| `OPENAI_MODEL` | OpenAI model used for extraction/generation (default `gpt-4o-mini`) |
+| `EXTRACTION_PROVIDER` | AI provider used for extraction (`openai`) |
 
-## Suggested demo narrative
+### Core backend dependencies
 
-When presenting this project, the story is:
-
-1. A lead comes in.
-2. AI extracts the commercial meaning.
-3. The system scores urgency and quality.
-4. A proposal draft is generated.
-5. A human reviews the output.
-6. The dashboard makes performance visible.
-
-That is the core value proposition: AI that fits into a business workflow, not just a prompt response.
+* FastAPI, Uvicorn
+* SQLAlchemy, Psycopg
+* Celery, Redis
+* OpenAI SDK
+* Pydantic / Pydantic Settings
+* python-dotenv
 
 ## Roadmap
 
 ### V1
-Portfolio-grade workflow with intake, extraction, scoring, proposal generation, approval flow, dashboard, and async execution.
+
+Portfolio-grade workflow with intake, extraction, scoring, proposal generation, approval flow, dashboard, and async execution. *(current status)*
 
 ### V2
+
 Integrations, authentication, multi-user support, CRM writeback, email automation, and stronger operational controls.
 
 ### V3
+
 Multi-tenant SaaS features, RBAC, billing hooks, advanced analytics, quality evaluation, and cloud production deployment.
-
-## Status
-
-This repository currently represents a strong V1 portfolio build with a product-first workflow and a realistic AI operations story.
 
 ## Contact
 
-Built as part of an AI engineering portfolio.
+Miguel Ribeiro de Sousa — [LinkedIn](https://www.linkedin.com/in/miguel-ribeiro-de-sousa)
